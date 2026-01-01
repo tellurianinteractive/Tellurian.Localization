@@ -9,7 +9,7 @@ This library is developed to support the follwing scenarios:
 - A centralised language translation service. It is posible to have all resources 
   in one project, also accessible from GUI and other usage.
 - Provide consistent ways in code to retrieve translations.
-- Easy to add new language translastions, eventually with help from AI.
+- Easy to add new language translations, eventually with help from AI.
 - Full control over translations, which is specially important
   in applications targeting special domain areas where terminology
   is important.
