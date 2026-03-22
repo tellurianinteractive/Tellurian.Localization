@@ -11,6 +11,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Localization</RepositoryUrl>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <Description>
+		A library useful for .NET developers that creates
+		applications intended for an international market.
+	</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

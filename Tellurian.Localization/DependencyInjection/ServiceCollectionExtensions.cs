@@ -51,6 +51,17 @@ namespace Tellurian.Localization.DependencyInjection
                     MarkdownResourceProvider.Key, (provider, key) => new MarkdownResourceProvider(rootPath));
 
             /// <summary>
+            /// Adds the <see cref="HttpMarkdownResourceProvider"/> to the <see cref="IServiceCollection"/>.
+            /// Use this instead of <see cref="AddMarkdownResourceProvider"/> in environments without
+            /// file system access, such as Blazor WebAssembly.
+            /// </summary>
+            /// <param name="rootPath">Root path of markdown content relative to the HTTP base address.</param>
+            public IServiceCollection AddHttpMarkdownResourceProvider(string rootPath) =>
+                serviceCollection.AddKeyedScoped<IResourceProvider, HttpMarkdownResourceProvider>(
+                    MarkdownResourceProvider.Key, (provider, key) =>
+                        new HttpMarkdownResourceProvider(provider.GetRequiredService<HttpClient>(), rootPath));
+
+            /// <summary>
             /// adds the <see cref="ObjectResourceProvider"/> to the <see cref="IServiceCollection"/>.
             /// </summary>
             public IServiceCollection AddObjectResourceProvider() =>
