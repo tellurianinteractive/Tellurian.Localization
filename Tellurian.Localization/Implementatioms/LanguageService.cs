@@ -9,9 +9,19 @@ namespace Tellurian.Localization.Implementatioms;
 /// <param name="languages">Exaxt one language is assumed to be the <see cref="FallbackLangauge"/>.</param>
 public sealed class LanguageService(IEnumerable<Language>? languages = null) : ILanguageService
 {
-    private readonly IList<Language> _languages = [.. (languages ?? [])];
+    private readonly IList<Language> _languages = InitLanguages(languages);
 
     public Language FallbackLangauge => _languages.Single(l => l.IsFallback);
+
+    private static IList<Language> InitLanguages(IEnumerable<Language>? languages)
+    {
+        var list = new List<Language>(languages ?? []);
+        if (list.Count > 0 && !list.Any(l => l.IsFallback))
+        {
+            list[0].IsFallback = true;
+        }
+        return list;
+    }
     public IList<Language> GetSupportedLanguages() => _languages;
     /// <summary>
     /// Adds a <see cref="Language"/> to the service's collection of languages. 
