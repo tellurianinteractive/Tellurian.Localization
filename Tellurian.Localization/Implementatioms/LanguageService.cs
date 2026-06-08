@@ -18,7 +18,7 @@ public sealed class LanguageService(IEnumerable<Language>? languages = null) : I
         var list = new List<Language>(languages ?? []);
         if (list.Count > 0 && !list.Any(l => l.IsFallback))
         {
-            list[0].IsFallback = true;
+            list[0] = list[0] with { IsFallback = true };
         }
         return list;
     }

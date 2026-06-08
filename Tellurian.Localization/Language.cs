@@ -9,7 +9,7 @@ namespace Tellurian.Localization;
 /// <param name="IsFullySupported">The language is expected to be fully supported in the application.</param>
 public record Language(string TwoLetterCode, bool IsFullySupported)
 {
-    public bool IsFallback { get; internal set; }
+    public bool IsFallback { get; init; }
     public string? CultureCode { get; init; }
     public bool CapitalizesNouns { get; init; } = false;
     public CultureInfo CultureInfo => CultureInfo.CreateSpecificCulture(ToString()) ?? CultureInfo.CurrentUICulture;

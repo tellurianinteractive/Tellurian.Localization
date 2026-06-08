@@ -4,9 +4,10 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>1.0.3</Version>
-		<AssemblyVersion>1.0.3.0</AssemblyVersion>
+		<Version>1.1.0</Version>
+		<AssemblyVersion>1.1.0.0</AssemblyVersion>
 		<Authors>Stefan Fjällemark, Tellurian Interactive</Authors>
+		<PackageReleaseNotes>1.1.0: IResourceProviderGroup.Translated&lt;T&gt;/Provider&lt;T&gt; now take the resource type (e.g. Translated&lt;Labels&gt;) — the previous 'where T : ResxResourceProvider' constraint made them uncallable. Language.IsFallback is now 'init' so the fallback language can be set explicitly. Fixed inverted string.HasValue extension.</PackageReleaseNotes>
 	</PropertyGroup>
 	
 	<PropertyGroup>

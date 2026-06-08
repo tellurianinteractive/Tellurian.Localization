@@ -70,7 +70,7 @@ support. This is configured using the `Language` record:
 ```csharp
 public record Language(string TwoLetterCode, bool IsFullySupported)
 {
-    public bool IsFallback { get; internal set; }
+    public bool IsFallback { get; init; }
     public string? CultureCode { get; init; }
     public bool CapitalizesNouns { get; init; } = false;
 }
@@ -79,7 +79,7 @@ public record Language(string TwoLetterCode, bool IsFullySupported)
 **Properties:**
 - **TwoLetterCode** - The [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) two letter language code, e.g. `en`, `sv`, `de`.
 - **IsFullySupported** - Indicates if the language has complete translations.
-- **IsFallback** - Marks the default language. Exactly one language must be marked as fallback.
+- **IsFallback** - Marks the default language. If no language is marked, the first one in the list is used as the fallback.
 - **CultureCode** - Optional culture specifier, e.g. `GB` for British English (`en-GB`).
 - **CapitalizesNouns** - Indicates if the language capitalizes nouns (e.g. German).
 
@@ -170,6 +170,17 @@ var options = builder.Services.BuildServiceProvider()
     .GetRequiredService<IOptions<Settings>>();
 builder.Services.AddTellurianLocalization(options);
 ```
+
+> **Blazor WebAssembly:** `AddTellurianLocalization` registers the file-based `MarkdownResourceProvider`,
+> which has no file-system access in the browser. Register the providers individually instead and use
+> `AddHttpMarkdownResourceProvider` for markdown (it fetches over HTTP relative to the app base address):
+>
+> ```csharp
+> builder.Services.AddLanguageService(languages);
+> builder.Services.AddResxResourceProviders([typeof(Labels)]);
+> builder.Services.AddHttpMarkdownResourceProvider("Content");
+> builder.Services.AddObjectResourceProvider();
+> ```
 
 ### Retrieving Services
 The providers are registered as **keyed singletons**:

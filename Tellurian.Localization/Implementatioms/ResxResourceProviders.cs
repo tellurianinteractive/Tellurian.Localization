@@ -21,14 +21,9 @@ public class ResxResourceProviders : IResourceProviderGroup
     internal ResxResourceProvider? GetProvider(Type type) =>
         _providers.TryGetValue(type, out ResxResourceProvider? value) ? value : null;
 
-    public ResxResourceProvider? Provider<T>() where T : ResxResourceProvider
-    {
-        var provider = GetProvider(typeof(T));
-        if (provider is null) return null;
-        return provider;
-    }
+    public ResxResourceProvider? Provider<T>() => GetProvider(typeof(T));
 
-    public async Task<TextContent> Translated<T>(string resourceKey, CultureInfo? cultureInfo = null) where T : ResxResourceProvider
+    public async Task<TextContent> Translated<T>(string resourceKey, CultureInfo? cultureInfo = null)
     {
         const string FileSuffix = ".resx";
         var provider = Provider<T>();

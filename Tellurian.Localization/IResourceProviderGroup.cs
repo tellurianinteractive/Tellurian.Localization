@@ -7,7 +7,7 @@ namespace Tellurian.Localization
     {
         string Name { get; }
 
-        ResxResourceProvider? Provider<T>() where T : ResxResourceProvider;
-        Task<TextContent> Translated<T>(string resourceKey, CultureInfo? cultureInfo = null) where T : ResxResourceProvider;
+        ResxResourceProvider? Provider<T>();
+        Task<TextContent> Translated<T>(string resourceKey, CultureInfo? cultureInfo = null);
     }
 }
