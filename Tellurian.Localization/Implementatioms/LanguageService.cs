@@ -6,12 +6,10 @@ namespace Tellurian.Localization.Implementatioms;
 /// <summary>
 /// Provides the application with information about supported languages.
 /// </summary>
-/// <param name="languages">Exaxt one language is assumed to be the <see cref="FallbackLangauge"/>.</param>
+/// <param name="languages">Exactly one language is assumed to be the fallback (marked with <see cref="Language.IsFallback"/>).</param>
 public sealed class LanguageService(IEnumerable<Language>? languages = null) : ILanguageService
 {
     private readonly IList<Language> _languages = InitLanguages(languages);
-
-    public Language FallbackLangauge => _languages.Single(l => l.IsFallback);
 
     private static IList<Language> InitLanguages(IEnumerable<Language>? languages)
     {
@@ -28,7 +26,7 @@ public sealed class LanguageService(IEnumerable<Language>? languages = null) : I
     /// </summary>
     /// <param name="language">Language to add.</param>
     /// <remarks>
-    /// The first language in the collection is assumed to be the <see cref="FallbackLangauge"/>.
+    /// The language marked with <see cref="Language.IsFallback"/> (or the first in the collection) is the fallback.
     /// </remarks>
     public void Add(Language language)
     {

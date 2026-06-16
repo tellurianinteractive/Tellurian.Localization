@@ -208,7 +208,6 @@ public class MyService(ILanguageService languageService)
     public void ShowSupportedLanguages()
     {
         var languages = languageService.GetSupportedLanguages();
-        var fallback = languageService.FallbackLangauge;
 
         foreach (var lang in languages)
         {

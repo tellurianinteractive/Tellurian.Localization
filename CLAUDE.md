@@ -46,12 +46,19 @@ Services are registered as keyed singletons:
 - `IResourceProvider` (key: "Object") - For Object provider
 
 ### Fallback Mechanism
-Translation lookup follows this order:
-1. Specific language with culture (e.g., `sv-SE`)
-2. Language only (e.g., `sv`)
-3. Default language with culture (e.g., `en-GB`)
-4. Default language only (e.g., `en`)
-5. Returns resource key if no translation found
+There is no single library-wide fallback chain — each provider falls back independently:
+
+- **ResxResourceProvider** delegates to the .NET `ResourceManager`, which probes the culture
+  hierarchy (`sv-SE` → `sv` → neutral). The neutral/fallback resources are the ones compiled
+  into the main assembly, governed by `<NeutralLanguage>` (`NeutralResourcesLanguageAttribute`),
+  set to `en-GB` here. Returns the resource key if nothing is found.
+- **MarkdownResourceProvider** tries `{key}.{lang}.md`, then the suffixless `{key}.md`,
+  then returns the resource key.
+- **ObjectResourceProvider** reads the property matching `CultureInfo.TwoLetterISOLanguageName`,
+  returning an empty result if there is no such property.
+
+`Language.IsFallback` marks the intended default language for callers' own use; the providers
+above do not consult it.
 
 ### Markdown File Organization
 - Naming: `{resourcekey}.{language}.md` (e.g., `welcome.sv.md`)
@@ -68,7 +75,6 @@ Uses Microsoft.Extensions.Options with `Settings` class:
 ## Known Issues
 
 - Directory name typo: `Implementatioms` (should be `Implementations`)
-- Property typo in `ILanguageService`: `FallbackLangauge` (should be `FallbackLanguage`)
 
 ## CI/CD
 
