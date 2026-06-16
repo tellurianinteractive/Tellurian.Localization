@@ -57,8 +57,8 @@ There is no single library-wide fallback chain — each provider falls back inde
 - **ObjectResourceProvider** reads the property matching `CultureInfo.TwoLetterISOLanguageName`,
   returning an empty result if there is no such property.
 
-`Language.IsFallback` marks the intended default language for callers' own use; the providers
-above do not consult it.
+There is no explicit fallback flag on `Language`; the default is the assembly's neutral language
+(`<NeutralLanguage>`), and .NET's culture parent chain does the rest.
 
 ### Markdown File Organization
 - Naming: `{resourcekey}.{language}.md` (e.g., `welcome.sv.md`)

@@ -9,7 +9,6 @@ namespace Tellurian.Localization;
 /// <param name="IsFullySupported">The language is expected to be fully supported in the application.</param>
 public record Language(string TwoLetterCode, bool IsFullySupported)
 {
-    public bool IsFallback { get; init; }
     public string? CultureCode { get; init; }
     public bool CapitalizesNouns { get; init; } = false;
     public CultureInfo CultureInfo => CultureInfo.CreateSpecificCulture(ToString()) ?? CultureInfo.CurrentUICulture;
@@ -23,7 +22,6 @@ public static class LanguageExtensions
         public bool IsOk =>
             languages is not null &&
             languages.Any() &&
-            (languages.GroupBy(l => l.TwoLetterCode).Count() == languages.Count() &&
-            languages.Count(l => l.IsFallback) == 1);
+            languages.GroupBy(l => l.TwoLetterCode).Count() == languages.Count();
     }
 }

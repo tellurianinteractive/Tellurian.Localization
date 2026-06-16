@@ -51,17 +51,19 @@ You can add new providers, for example getting trainslations online
 or in other file formats.
 
 ### Fallback Behaviour
-You must define a default language. This will be the fallback if a 
-translation for the specific language is not found.
+Fallback is handled by .NET, not by this library. Providers resolve translations from
+`CultureInfo.CurrentUICulture`, and the framework walks the culture's parent chain
+(e.g. `sv-SE` → `sv` → the assembly's *neutral* language) automatically. The neutral
+language is configured with `<NeutralLanguage>` in the project file
+(`NeutralResourcesLanguageAttribute`), `en-GB` in this library.
 
-When seaching for a translation of a specific *resource key*, 
-the search uses a fallback mechanism:
-1. Use specific language with culture, example **sv-SE**.
-2. Else use language, example **sv**.
-3. Else use default language with culture, example **en-GB**.
-4. Else use language, example **en**.
-5. Else if no translation is found, return *resource key* to
-   indicate that a translation is missing.
+How each provider behaves when no translation exists:
+- **ResxResourceProvider** - the .NET `ResourceManager` probes `sv-SE` → `sv` → neutral,
+  then returns the *resource key* if nothing is found.
+- **MarkdownResourceProvider** - tries `{key}.{lang}.md`, then the suffixless `{key}.md`,
+  then returns the *resource key*.
+- **ObjectResourceProvider** - reads the property matching the culture's two-letter code,
+  returning an empty result if there is none.
 
 ### Supported Languages
 .NET Localization needs to know what languages the application
@@ -70,7 +72,6 @@ support. This is configured using the `Language` record:
 ```csharp
 public record Language(string TwoLetterCode, bool IsFullySupported)
 {
-    public bool IsFallback { get; init; }
     public string? CultureCode { get; init; }
     public bool CapitalizesNouns { get; init; } = false;
 }
@@ -79,17 +80,19 @@ public record Language(string TwoLetterCode, bool IsFullySupported)
 **Properties:**
 - **TwoLetterCode** - The [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) two letter language code, e.g. `en`, `sv`, `de`.
 - **IsFullySupported** - Indicates if the language has complete translations.
-- **IsFallback** - Marks the default language. If no language is marked, the first one in the list is used as the fallback.
 - **CultureCode** - Optional culture specifier, e.g. `GB` for British English (`en-GB`).
 - **CapitalizesNouns** - Indicates if the language capitalizes nouns (e.g. German).
+
+> The default/fallback language is not marked on `Language`; it is the assembly's neutral
+> language set via `<NeutralLanguage>` in the project file. See **Fallback Behaviour** above.
 
 **Example:**
 ```csharp
 var languages = new List<Language>
 {
-    new("en", true) { IsFallback = true, CultureCode = "GB" },  // British English (default)
-    new("sv", true) { CultureCode = "SE" },                      // Swedish
-    new("de", false) { CapitalizesNouns = true },                // German (partial support)
+    new("en", true) { CultureCode = "GB" },        // British English
+    new("sv", true) { CultureCode = "SE" },        // Swedish
+    new("de", false) { CapitalizesNouns = true },  // German (partial support)
 };
 ```
 
@@ -152,7 +155,7 @@ builder.Services.Configure<Settings>(options =>
 {
     options.Languages = new List<Language>
     {
-        new("en", true) { IsFallback = true, CultureCode = "GB" },
+        new("en", true) { CultureCode = "GB" },
         new("sv", true) { CultureCode = "SE" },
         new("de", false)
     };

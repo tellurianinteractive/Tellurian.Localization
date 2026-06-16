@@ -5,9 +5,9 @@ namespace Tellurian.Localization;
 /// Provides the application with information about supported languages.
 /// </summary>
 /// <remarks>
-/// The language marked with <see cref="Language.IsFallback"/> (or the first in the collection) is the fallback.
-/// For RESX resources the effective fallback is the assembly's neutral language
-/// (<see cref="System.Resources.NeutralResourcesLanguageAttribute"/>), resolved by the .NET <c>ResourceManager</c>.
+/// Fallback is handled by .NET itself: providers resolve translations from <see cref="CultureInfo.CurrentUICulture"/>,
+/// and the framework walks the culture's parent chain down to the assembly's neutral language
+/// (<see cref="System.Resources.NeutralResourcesLanguageAttribute"/>). There is no explicit fallback language to mark.
 /// </remarks>
 public interface ILanguageService
 {
