@@ -31,6 +31,8 @@ dotnet pack
 ### Resource Provider Pattern
 The library uses an extensible provider pattern. All providers implement `IResourceProvider` and return `TextContent` records containing the translated text, source type, and optional timestamp.
 
+In-memory providers (RESX, Object) additionally implement `ISynchronousResourceProvider`, exposing a synchronous `GetTranslation`. File/HTTP-backed providers (Markdown, HttpMarkdown) deliberately do not, so they cannot be called synchronously. On `IResourceProviderGroup` the synchronous lookup is `Translated<T>` and the async one is `TranslatedAsync<T>`.
+
 Three built-in providers:
 1. **ResxResourceProvider** - Uses .NET ResourceManager for compiled RESX files
 2. **MarkdownResourceProvider** - Reads markdown files with naming convention `{key}.{lang}.md`

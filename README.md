@@ -101,6 +101,7 @@ var languages = new List<Language>
 |-----------|-------------|
 | `ILanguageService` | Provides information about supported languages and the fallback language. |
 | `IResourceProvider` | Retrieves translations from a specific source (RESX, Markdown, Object). |
+| `ISynchronousResourceProvider` | Implemented by providers whose lookups are genuinely in-memory (RESX, Object), exposing a synchronous `GetTranslation`. File/HTTP-backed providers do *not* implement it, so they can't be called synchronously by mistake. |
 | `IResourceProviderGroup` | Manages multiple resource providers of the same type. |
 
 ### Key Classes
@@ -226,20 +227,26 @@ public class MyService(ILanguageService languageService)
 RESX files are compiled into satellite assemblies by .NET.
 The `ResxResourceProvider` uses the standard `ResourceManager` to retrieve translations.
 
+Because RESX (and Object) lookups are genuinely in-memory, `IResourceProviderGroup`
+exposes both a **synchronous** `Translated<T>` and an **asynchronous** `TranslatedAsync<T>`.
+Use the synchronous overload from synchronous contexts (e.g. Razor component markup)
+to avoid sync-over-async; use the async overload where you are already in an async flow.
+
 ```csharp
 public class TranslationService(
     [FromKeyedServices("Resx")] IResourceProviderGroup resxProviders)
 {
-    public async Task<string> GetLabel(string key)
+    public string GetLabel(string key)
     {
-        // Uses CultureInfo.CurrentUICulture automatically
-        var content = await resxProviders.Translated<Labels>(key);
+        // Synchronous, uses CultureInfo.CurrentUICulture automatically
+        var content = resxProviders.Translated<Labels>(key);
         return content.Text;
     }
 
-    public async Task<string> GetLabelForCulture(string key, CultureInfo culture)
+    public async Task<string> GetLabelAsync(string key, CultureInfo culture)
     {
-        var content = await resxProviders.Translated<Labels>(key, culture);
+        // Asynchronous overload
+        var content = await resxProviders.TranslatedAsync<Labels>(key, culture);
         return content.Text;
     }
 }
