@@ -4,10 +4,11 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>1.1.0</Version>
-		<AssemblyVersion>1.1.0.0</AssemblyVersion>
+		<Version>1.2.0</Version>
+		<AssemblyVersion>1.2.0.0</AssemblyVersion>
 		<Authors>Stefan Fjällemark, Tellurian Interactive</Authors>
-		<PackageReleaseNotes>1.1.0: IResourceProviderGroup.Translated&lt;T&gt;/Provider&lt;T&gt; now take the resource type (e.g. Translated&lt;Labels&gt;) — the previous 'where T : ResxResourceProvider' constraint made them uncallable. Language.IsFallback is now 'init' so the fallback language can be set explicitly. Fixed inverted string.HasValue extension.</PackageReleaseNotes>
+		<PackageReleaseNotes>1.2.0: Added synchronous resource lookup. In-memory providers (resx, object) now implement the new ISynchronousResourceProvider with a GetTranslation method. On IResourceProviderGroup the synchronous lookup is Translated&lt;T&gt; and the async one is renamed to TranslatedAsync&lt;T&gt; (was Translated&lt;T&gt;). File/HTTP-backed providers remain async-only. This lets resx be translated from synchronous contexts (e.g. component markup) without sync-over-async.
+1.1.0: IResourceProviderGroup.Translated&lt;T&gt;/Provider&lt;T&gt; now take the resource type (e.g. Translated&lt;Labels&gt;) — the previous 'where T : ResxResourceProvider' constraint made them uncallable. Language.IsFallback is now 'init' so the fallback language can be set explicitly. Fixed inverted string.HasValue extension.</PackageReleaseNotes>
 	</PropertyGroup>
 	
 	<PropertyGroup>

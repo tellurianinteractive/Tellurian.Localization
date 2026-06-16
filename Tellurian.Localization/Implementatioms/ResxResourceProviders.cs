@@ -23,7 +23,15 @@ public class ResxResourceProviders : IResourceProviderGroup
 
     public ResxResourceProvider? Provider<T>() => GetProvider(typeof(T));
 
-    public async Task<TextContent> Translated<T>(string resourceKey, CultureInfo? cultureInfo = null)
+    public TextContent Translated<T>(string resourceKey, CultureInfo? cultureInfo = null)
+    {
+        const string FileSuffix = ".resx";
+        var provider = Provider<T>();
+        if (provider is null) return resourceKey.ToTextContent(FileSuffix);
+        return provider.GetTranslation(resourceKey, cultureInfo);
+    }
+
+    public async Task<TextContent> TranslatedAsync<T>(string resourceKey, CultureInfo? cultureInfo = null)
     {
         const string FileSuffix = ".resx";
         var provider = Provider<T>();

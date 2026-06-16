@@ -2,7 +2,7 @@
 
 namespace Tellurian.Localization.Implementatioms;
 
-internal class ObjectResourceProvider : IResourceProvider
+internal class ObjectResourceProvider : IResourceProvider, ISynchronousResourceProvider
 {
     public const string Key = "Object";
     public string Name => Key;
@@ -12,12 +12,16 @@ internal class ObjectResourceProvider : IResourceProvider
     /// <param name="objectWithLanguageProperties">An object with property names that matches <see cref="CultureInfo.TwoLetterISOLanguageName"/></param>
     /// <param name="cultureInfo">The property name as <see cref="CultureInfo.TwoLetterISOLanguageName"/></param>
     /// <returns>String value of the two letter property name correponding to the <see cref="CultureInfo.TwoLetterISOLanguageName"/></returns>
-    public Task<TextContent> GetTranslationAsync(object objectWithLanguageProperties, CultureInfo cultureInfo)
+    public TextContent GetTranslation(object objectWithLanguageProperties, CultureInfo? cultureInfo = null)
     {
-        var property = objectWithLanguageProperties.GetType().GetProperty(cultureInfo.TwoLetterISOLanguageName);
-        if (property is null) return objectWithLanguageProperties.ToEmptyResult();
+        var culture = cultureInfo ?? CultureInfo.CurrentUICulture;
+        var property = objectWithLanguageProperties.GetType().GetProperty(culture.TwoLetterISOLanguageName);
+        if (property is null) return objectWithLanguageProperties.ToEmptyTextContent();
         return property.GetValue(objectWithLanguageProperties) is not string value ?
-            objectWithLanguageProperties.ToEmptyResult() :
-            value.ToResult(".obj");
+            objectWithLanguageProperties.ToEmptyTextContent() :
+            value.ToTextContent(".obj");
     }
+
+    public Task<TextContent> GetTranslationAsync(object objectWithLanguageProperties, CultureInfo cultureInfo) =>
+        Task.FromResult(GetTranslation(objectWithLanguageProperties, cultureInfo));
 }
