@@ -42,10 +42,11 @@ This library has an extensible model for adding new sources of language resource
 - **MarkdownResourceProvider** gets resources in form of markdown files with 
   a naming convenstion *resourcename*.*language/culture*.md. Markdown files
   should be structure in a base-folder, but can contain sub-folders. 
-- **ObjectResourceProvider** uses reflection to find string properties that
-  matches the language, and returns the text of the property. This is 
-  useful for example when you load an object from a database with columns
-  for each supported language.
+- **ObjectResourceProvider** uses reflection to find the string property whose
+  name matches the language (the culture's two-letter code, matched
+  *case-insensitively* — so both `EN` and `en` resolve), and returns the text of
+  that property. This is useful for example when you load an object from a
+  database with columns for each supported language.
 
 You can add new providers, for example getting trainslations online
 or in other file formats.
@@ -62,8 +63,8 @@ How each provider behaves when no translation exists:
   then returns the *resource key* if nothing is found.
 - **MarkdownResourceProvider** - tries `{key}.{lang}.md`, then the suffixless `{key}.md`,
   then returns the *resource key*.
-- **ObjectResourceProvider** - reads the property matching the culture's two-letter code,
-  returning an empty result if there is none.
+- **ObjectResourceProvider** - reads the property matching the culture's two-letter code
+  (case-insensitively), returning an empty result if there is none.
 
 ### Supported Languages
 .NET Localization needs to know what languages the application
@@ -272,13 +273,15 @@ public class ContentService(
 ### Using Object Resources
 Useful for objects loaded from a database with language-specific columns:
 ```csharp
-// Example: Entity with language properties
+// Example: Entity with language properties. Property names match the two-letter
+// language code and are resolved case-insensitively, so conventional C# casing
+// (EN, SV, DE) works just as well as lowercase (en, sv, de).
 public class ProductDescription
 {
     public int Id { get; set; }
-    public string en { get; set; } = "";  // English description
-    public string sv { get; set; } = "";  // Swedish description
-    public string de { get; set; } = "";  // German description
+    public string EN { get; set; } = "";  // English description
+    public string SV { get; set; } = "";  // Swedish description
+    public string DE { get; set; } = "";  // German description
 }
 
 public class ProductService(

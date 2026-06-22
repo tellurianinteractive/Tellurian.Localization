@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Reflection;
 
 namespace Tellurian.Localization.Implementatioms;
 
@@ -15,7 +16,12 @@ internal class ObjectResourceProvider : IResourceProvider, ISynchronousResourceP
     public TextContent GetTranslation(object objectWithLanguageProperties, CultureInfo? cultureInfo = null)
     {
         var culture = cultureInfo ?? CultureInfo.CurrentUICulture;
-        var property = objectWithLanguageProperties.GetType().GetProperty(culture.TwoLetterISOLanguageName);
+        // Case-insensitive so callers can use conventional C# property names (EN, SV, ...).
+        // CultureInfo.TwoLetterISOLanguageName is always lowercase, so an exact-case lookup
+        // would miss PascalCase/uppercase properties.
+        var property = objectWithLanguageProperties.GetType().GetProperty(
+            culture.TwoLetterISOLanguageName,
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
         if (property is null) return objectWithLanguageProperties.ToEmptyTextContent();
         return property.GetValue(objectWithLanguageProperties) is not string value ?
             objectWithLanguageProperties.ToEmptyTextContent() :
